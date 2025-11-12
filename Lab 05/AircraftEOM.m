@@ -7,7 +7,7 @@ function xdot = AircraftEOM(time, aircraft_state, aircraft_surfaces, wind_inerti
 x = aircraft_state(1); 
 y = aircraft_state(2); 
 z = aircraft_state(3);
-phi = aircraft_state4); 
+phi = aircraft_state(4); 
 theta = aircraft_state(5); 
 psi = aircraft_state(6);
 uE = aircraft_state(7); 
@@ -44,6 +44,7 @@ uvw_dot  = (F_tot - cross(omega, m * Vb)) / m; % Cross() is MatLab's cross funct
 pqr_dot  = I \ (M_tot - cross(omega, I*omega));
 
 xdot = [position_dot; eul_dot; uvw_dot; pqr_dot];
+
 
 
 
