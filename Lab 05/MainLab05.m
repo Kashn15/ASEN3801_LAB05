@@ -21,7 +21,7 @@ w0=0;
 p0=0;
 q0=0;
 r0=0;
-aircraft_state = [x0;y0;z0;phi0;theta0;psi0;u0;v0;w0;p0;q0;r0];
+initial_aircraft_state = [x0;y0;z0;phi0;theta0;psi0;u0;v0;w0;p0;q0;r0];
 
 de0=0;
 da0=0;
@@ -34,11 +34,11 @@ wind_inertial = [0;0;0];
 
 
 %% 
-eom_function_handle = @(t,var) AircraftEOM(t,aircraft_state,aircraft_surfaces,wind_inertial,aircraft_parameters);
+eom_function_handle = @(t,aircraft_state) AircraftEOM(t,aircraft_state,aircraft_surfaces,wind_inertial,aircraft_parameters);
 
 tspan = [0 10];
 ops = [];
-[time1, state1] = ode45(eom_function_handle,tspan,aircraft_state,ops);
+[time1, state1] = ode45(eom_function_handle,tspan,initial_aircraft_state,ops);
 control_input_array = aircraft_surfaces * (ones(size(time1)))';
 control_input_array = control_input_array';
 %control_input_array = [];
