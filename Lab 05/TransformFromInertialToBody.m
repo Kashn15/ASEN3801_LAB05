@@ -1,6 +1,6 @@
 %% TransformFromInertialToBody Function
 % Creator: Bridger and Natsumi 
-function TransformFromInertialToBody(wind_inertial, eul_angle)
+function [wind_body] = TransformFromInertialToBody(wind_inertial, eul_angle)
 
 phi = eul_angle(1,1); % roll 
 theta = eul_angle(2,1); % pitch
