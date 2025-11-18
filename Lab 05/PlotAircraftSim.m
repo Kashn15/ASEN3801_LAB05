@@ -31,7 +31,7 @@ ytickformat('%.2f')
 grid on;
 
 subplot(3,1,3)
-plot(time,Inertial_pos(:,3),col);
+plot(time,-Inertial_pos(:,3),col);
 hold on;
 title('Z Position');
 xlabel('Time [s]')
