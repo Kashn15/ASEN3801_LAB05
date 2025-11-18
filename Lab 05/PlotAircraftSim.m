@@ -137,7 +137,9 @@ title('Yaw Rate');
 
 sgtitle('Angular Velocities', 'FontSize', 13);
 
+
 %Plot control variables (Control surfaces deflection)
+if ~isempty(control_input_array)
 figure(fig(5));
 
 subplot(4,1,1);
@@ -178,6 +180,9 @@ grid on;
 
 sgtitle('Deflection of Control Surfaces', 'FontSize', 13);
 
+else
+    
+end
 % 3D Plot of Aircraft Position
 figure(fig(6));
 plot3(Inertial_pos(:,1), Inertial_pos(:,2), -Inertial_pos(:,3), col); %Negative z to make positive up
