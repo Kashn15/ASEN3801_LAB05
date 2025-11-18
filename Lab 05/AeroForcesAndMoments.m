@@ -1,4 +1,4 @@
-function [aero_forces, aero_moments] = AeroForcesAndMoments(aircraft_state, aircraft_surfaces, wind_inertial, density, aircraft_parameters)
+function [aero_forces, aero_moments] = AeroForcesAndMoments(aircraft_state, aircraft_surfaces, wind_inertial, aircraft_parameters)
 %
 % 
 % aircraft_state = [xi, yi, zi, roll, pitch, yaw, u, v, w, p, q, r]
@@ -36,7 +36,7 @@ dt = aircraft_surfaces(4,1);
 alpha_dot = 0;
 
 %Q = ap.qbar;
-Q = 0.5*density*V*V;
+Q = 0.5*ap.density*V*V;
 
 sa = sin(alpha);
 ca = cos(alpha);
@@ -52,7 +52,7 @@ CZ = -CD*sa - CL*ca;
 CY = ap.CY0 + ap.CYbeta*beta + ap.CYp*p*ap.b/(2*V) + ap.CYr*r*ap.b/(2*V) + ap.CYda*da + ap.CYdr*dr;
 
 %%Thrust = .5*density*ap.Sprop*ap.Cprop*((ap.kmotor*dt)^2 - V^2);
-Thrust = density*ap.Sprop*ap.Cprop*(V + dt*(ap.kmotor - V))*dt*(ap.kmotor-V); %%Changed 5/2/15; New model as described in http://uavbook.byu.edu/lib/exe/fetch.php?media=shared:propeller_model.pdf
+Thrust = ap.density*ap.Sprop*ap.Cprop*(V + dt*(ap.kmotor - V))*dt*(ap.kmotor-V); %%Changed 5/2/15; New model as described in http://uavbook.byu.edu/lib/exe/fetch.php?media=shared:propeller_model.pdf
 
 %%% determine aero forces from coeffficients 
 X = Q*ap.S*CX + Thrust;
