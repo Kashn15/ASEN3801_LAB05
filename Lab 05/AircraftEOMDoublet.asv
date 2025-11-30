@@ -1,0 +1,78 @@
+%% AircraftEOM Function
+% Creator: Natsumi Kakuda
+
+function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doublet_size, doublet_time, wind_inertial, aircraft_parameters)
+
+% Notes
+% Earth frame: NED (z positive Down)
+% Body frame : x forward (out of nose), y right (out of pilot's right wing), z down
+
+% Extract parameters from state vector
+xE = aircraft_state(1); 
+yE = aircraft_state(2); 
+zE = aircraft_state(3);
+phi = aircraft_state(4); 
+theta = aircraft_state(5); 
+psi = aircraft_state(6);
+u = aircraft_state(7); 
+v = aircraft_state(8); 
+w = aircraft_state(9);
+p = aircraft_state(10); 
+q = aircraft_state(11); 
+r = aircraft_state(12);
+
+% Trim Controls Extraction
+de_trim = aircraft_surfaces_trim(1);
+da = aircraft_surfaces_trim(2);
+dr = aircraft_surfaces_trim(3);
+dt = aircraft_surfaces_trim(4);
+
+% Elevator Doublet Logic
+if time > 0 && time <= doublet_time
+    de = de_trim + doublet_size;
+elseif time > doublet_time && time <= 2*double_time
+    de = de_trim - doublet_size;
+elseif t > 2*doublet_time
+    de = de_trim;
+end
+
+% Aircraft Control Vector
+aircraft_surfaces = [de; da; dr; dt];
+
+% Inertia Matrix Set up
+I = [aircraft_parameters.Ix, 0, -aircraft_parameters.Ixz; 0, aircraft_parameters.Iy, 0; -aircraft_parameters.Ixz, 0, aircraft_parameters.Iz];
+
+% Omega and Vb Set up
+omega = [p;q;r]; % Body Frame
+Vb = [u;v;w];
+
+% Rotation Matrices
+R_BE = Rot_Mat(phi,theta,psi);    % Body to Earth
+R_EB = R_BE.';                    % Earth to Body
+
+% Density Calculation
+h = -zE; % We want magnitude since our frame defines zE as positive downwards
+[~,~,~,rho] = atmosisa(h); % Density [kg/m^3]
+density = rho;
+
+% Aerodynamic Forces and Moments
+[Aero_F, Aero_M] = AeroForcesAndMoments(aircraft_state, aircraft_surfaces, wind_inertial, density, aircraft_parameters);
+
+% Calculate thrust and gravitational forces
+F_g = aircraft_parameters.m * (R_EB * [0; 0; aircraft_parameters.g]);
+F_tot = Aero_F + F_g; % Total forces
+M_tot = Aero_M; % Total moments
+
+% Kinematics
+pos_dot = R_BE * Vb;
+eul_dot = euler_kinematics(phi,theta,psi,omega);
+
+% Dynamics
+uvw_dot  = (F_tot - cross(omega, aircraft_parameters.m * Vb)) / aircraft_parameters.m; % Cross() is MatLab's cross function
+pqr_dot  = I \ (M_tot - cross(omega, I*omega));
+
+xdot = [pos_dot; eul_dot; uvw_dot; pqr_dot];
+
+
+
+
