@@ -189,7 +189,7 @@ if Problem3_1 == 1
     PlotAircraftSim(t31, xdot_4, ctrl_31, fig31, col4);
 
     % Natural Frequency and Damping Ratio for Short Period Mode
-    %[w_n_31sp, zeta_31sp] = wn_zeta_funct_sp(z_e, u_e, aircraft_parameters);
+    [w_n_31sp, zeta_31sp] = wn_zeta_funct_sp(z_e, u_e, aircraft_parameters);
 
 end
 
@@ -250,5 +250,6 @@ if Problem3_2 == 1
 
     % Natural Frequency and Damping Ratio for Phugoid Mode
     [w_n_32ph, zeta_32ph] = wn_zeta_funct_ph(z_e, u_e, aircraft_parameters);
+
 
 end
