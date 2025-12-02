@@ -15,9 +15,9 @@ close all;
 %% Toggle Section
 Problem2_1 = 0;
 Problem2_2 = 0;
-Problem2_3 = 0;
-Problem3_1 = 1;
-Problem3_2 = 1;
+Problem2_3 = 1;
+Problem3_1 = 0;
+Problem3_2 = 0;
 
 %% Overall Givens
 
@@ -38,7 +38,7 @@ col4 = 'm-'; % Problem 3.1
 col5 = 'g-'; % Problem 3.2
 
 % Simulation Time
-t_f = 5; % [s]
+t_f = 100; % [s]
 
 %% Problem 2.1
 if Problem2_1 == 1
@@ -61,8 +61,7 @@ if Problem2_1 == 1
     wind_inertial = [0;0;0]; % No wind
     
     % ODE45
-    odefun = @(t,AC_X21) AircraftEOM(t_f, AC_X21, AC_Surf, wind_inertial, aircraft_parameters);
-    [t21, xdot_1] = ode45(odefun, [0, t_f], AC_X21);
+    [t21, xdot_1] = ode45(@(t, x) AircraftEOM(t, x, AC_Surf, wind_inertial, aircraft_parameters), [0, t_f], AC_X21);
 
     ctrl_21 = repmat(AC_Surf.', length(t21), 1);  % Values of Control inputs with each row = [de, da, dr, dt]
 
@@ -90,7 +89,7 @@ if Problem2_2 == 1
     AC_ctrl22 = [0.1079; 0; 0; 0.3182]; % u0 - Control input
     wind_inertial = [0;0;0]; % No wind
 
-    odefun = @(t,AC_X22) AircraftEOM(t_f, AC_X22, AC_ctrl22, wind_inertial, aircraft_parameters);
+    odefun = @(t,x) AircraftEOM(t, x, AC_ctrl22, wind_inertial, aircraft_parameters);
     [t22, xdot_2] = ode45(odefun, [0, t_f], AC_X22);
     ctrl_22 = repmat(AC_ctrl22.', length(t22), 1);  % Values of Control inputs with each row = [de, da, dr, dt]
 
@@ -120,8 +119,9 @@ if Problem2_3 == 1
     AC_ctrl23 = [deg2rad(5); deg2rad(2); deg2rad(-13); 0.3]; % Control imputs [de0, da0, dr0, dt0]
     wind_inertial = [0;0;0]; % No wind
 
-    odefun = @(t,AC_X23) AircraftEOM(t_f, AC_X23, AC_ctrl23, wind_inertial, aircraft_parameters);
+    odefun = @(t,x) AircraftEOM(t, x, AC_ctrl23, wind_inertial, aircraft_parameters);
     [t23, xdot_3] = ode45(odefun, [0, t_f], AC_X23);
+    
     ctrl_23 = repmat(AC_ctrl23.', length(t23), 1);  % Values of Control inputs with each row = [de, da, dr, dt]
 
     PlotAircraftSim(t23, xdot_3, ctrl_23, fig23, col3);
@@ -157,8 +157,8 @@ if Problem3_1 == 1
     AC_ctrl31 = [0.1079; 0; 0; 0.3182]; % Control input
     wind_inertial = [0;0;0]; % No wind
 
-    odefun = @(t, AC_X31) AircraftEOMDoublet(t_f_sp, AC_X31, AC_ctrl31, doublet_size, doublet_time, wind_inertial, aircraft_parameters);
-    [t31, xdot_4] = ode45(odefun, [0, t_f_sp], AC_X31);
+    % ode45
+    [t31, xdot_4] = ode45(@(t, x) AircraftEOMDoublet(t, x, AC_ctrl31, doublet_size, doublet_time, wind_inertial, aircraft_parameters), [0, t_f_sp], AC_X31);
 
     % Control Values of Control inputs for Doublet Law (Controls)
     de_31 = zeros(size(t31)); % Elevator
@@ -184,7 +184,7 @@ if Problem3_1 == 1
     PlotAircraftSim(t31, xdot_4, ctrl_31, fig31, col4);
 
     % Natural Frequency and Damping Ratio for Short Period Mode
-    [w_n_31sp, zeta_31sp] = wn_zeta_funct_sp(z_e, u_e, aircraft_parameters);
+    %[w_n_31sp, zeta_31sp] = wn_zeta_funct_sp(z_e, u_e, aircraft_parameters);
 
 end
 
@@ -217,8 +217,8 @@ if Problem3_2 == 1
     AC_ctrl = [0.1079; 0; 0; 0.3182]; % u0 - Control input
     wind_inertial = [0;0;0]; % No wind
 
-    odefun = @(t,AC_X31) AircraftEOMDoublet(t_f_lp, AC_X31, AC_ctrl, doublet_size, doublet_time, wind_inertial, aircraft_parameters);
-    [t32, xdot_5] = ode45(odefun, [0, t_f_lp], AC_X31);
+    odefun = @(t,AC_X32) AircraftEOMDoublet(t_f_lp, AC_X32, AC_ctrl, doublet_size, doublet_time, wind_inertial, aircraft_parameters);
+    [t32, xdot_5] = ode45(odefun, [0, t_f_lp], AC_X32);
 
     % Control Values of Control inputs for Doublet Law (Controls)
     de_32 = zeros(size(t32)); % Elevator
@@ -244,7 +244,8 @@ if Problem3_2 == 1
     PlotAircraftSim(t32, xdot_5, ctrl_32, fig32, col5);
 
     % Natural Frequency and Damping Ratio for Phugiod Mode
-    [w_n_32ph, zeta_32ph] = wn_zeta_funct_ph(z_e, u_e, aircraft_parameters);
+    %[w_n_32ph, zeta_32ph] = wn_zeta_funct_ph(z_e, u_e, aircraft_parameters);
 
 end
+
 
