@@ -31,7 +31,7 @@ Iz = aircraft_parameters.Iz;
 % I = [Ix, 0, Ixz; 0, Iy, 0; Ixz, 0, Iz];
 
 % Gamma 
-Gamma = Ix*Iz -Ixz^2;
+Gamma = Ix*Iz - Ixz^2;
 Gamma1 = (Ixz*(Ix-Iy)+Ixz^2)/Gamma;
 Gamma2 = (Iz*(Iz-Iy)+Ixz^2)/Gamma;
 Gamma3 = Iz / Gamma;
@@ -47,10 +47,9 @@ Vb = [u;v;w];
 
 % Rotation Matrices
 R_BE = Rot_Mat(phi,theta,psi);    % Body to Earth
-% R_EB = R_BE.';                    % Earth to Body
 
 % Density Calculation
-h = -zE; % We want magnitude since our frame defines zE as positive downwards
+h = abs(zE); % We want magnitude since our frame defines zE as positive downwards
 [~,~,~,rho] = atmosisa(h); % Density [kg/m^3]
 density = rho;
 
@@ -78,20 +77,18 @@ v_E = pos_dot(2);
 w_E = pos_dot(3);
 
 % Dynamics
-% uvw_dot  = (F_tot - cross(omega, aircraft_parameters.m * Vb)) / aircraft_parameters.m; % Cross() is MatLab's cross function
-% pqr_dot  = I \ (M_tot - cross(omega, I*omega));
-
-p_dot = Gamma1*p*q - Gamma2*q*r+Gamma3*L+Gamma4*N;
-q_dot = Gamma5*p*r - Gamma6*((p^2)-(r^2))+(1/Iy)*M;
-r_dot = Gamma7*p*q - Gamma1*q*r + Gamma4*L+Gamma8*N;
+p_dot = (Gamma1*p*q - Gamma2*q*r) + (Gamma3*L+Gamma4*N);
+q_dot = (Gamma5*p*r - Gamma6*((p^2)-(r^2)))+(1/Iy)*M;
+r_dot = (Gamma7*p*q - Gamma1*q*r) + (Gamma4*L+Gamma8*N);
 pqr_dot = [p_dot; q_dot; r_dot];
 
-u_dot = (r*u_E-1*w_E)+ aircraft_parameters.g *(-sin(theta))+ (X/aircraft_parameters.m);
-v_dot = (p*w_E + q*u_E) + aircraft_parameters.g * cos(theta) * sin(phi) + (Y/aircraft_parameters.m);
-w_dot = (q*v_E - r*u_E) + aircraft_parameters.g * cos(theta) * cos(phi) + (Z/aircraft_parameters.m);
+u_dot = (r*v_E- q*w_E)+ aircraft_parameters.g *(-sin(theta))+ (X/aircraft_parameters.m);
+v_dot = (p*w_E + r*u_E) + aircraft_parameters.g * cos(theta) * sin(phi) + (Y/aircraft_parameters.m);
+w_dot = (q*u_E - p*v_E) + aircraft_parameters.g * cos(theta) * cos(phi) + (Z/aircraft_parameters.m);
 uvw_dot = [u_dot; v_dot; w_dot];
 
 xdot = [pos_dot; eul_dot; uvw_dot; pqr_dot];
+
 
 
 
