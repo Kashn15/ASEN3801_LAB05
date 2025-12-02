@@ -17,7 +17,7 @@ Problem2_1 = 0;
 Problem2_2 = 0;
 Problem2_3 = 0;
 Problem3_1 = 0;
-Problem3_2 = 1;
+Problem3_2 = 0;
 
 %% Overall Givens
 
@@ -182,7 +182,7 @@ if Problem3_1 == 1
     PlotAircraftSim(t31, xdot_4, ctrl_31, fig31, col4);
 
     % Natural Frequency and Damping Ratio
-
+    [w_n_31, zeta_31] = wn_zeta_funct(z_e, u_e, aircraft_parameters);
 end
 
 %% Problem 3.2
@@ -241,5 +241,5 @@ if Problem3_2 == 1
     PlotAircraftSim(t32, xdot_5, ctrl_32, fig32, col5);
 
     % Natural Frequency and Damping Ratio
-
+    [w_n_32, zeta_32] = wn_zeta_funct(z_e, u_e, aircraft_parameters);
 end
