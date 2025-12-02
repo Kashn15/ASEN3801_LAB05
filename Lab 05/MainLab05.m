@@ -15,7 +15,7 @@ close all;
 %% Toggle Section
 Problem2_1 = 0;
 Problem2_2 = 0;
-Problem2_3 = 1;
+Problem2_3 = 1; % Problem Child
 Problem3_1 = 0;
 Problem3_2 = 0;
 
@@ -38,7 +38,7 @@ col4 = 'm-'; % Problem 3.1
 col5 = 'g-'; % Problem 3.2
 
 % Simulation Time
-t_f = 100; % [s]
+t_f = 25; % [s]
 
 %% Problem 2.1
 if Problem2_1 == 1
@@ -91,6 +91,7 @@ if Problem2_2 == 1
 
     odefun = @(t,x) AircraftEOM(t, x, AC_ctrl22, wind_inertial, aircraft_parameters);
     [t22, xdot_2] = ode45(odefun, [0, t_f], AC_X22);
+    
     ctrl_22 = repmat(AC_ctrl22.', length(t22), 1);  % Values of Control inputs with each row = [de, da, dr, dt]
 
     PlotAircraftSim(t22, xdot_2, ctrl_22, fig22, col2);
@@ -119,8 +120,9 @@ if Problem2_3 == 1
     AC_ctrl23 = [deg2rad(5); deg2rad(2); deg2rad(-13); 0.3]; % Control imputs [de0, da0, dr0, dt0]
     wind_inertial = [0;0;0]; % No wind
 
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-8);
     odefun = @(t,x) AircraftEOM(t, x, AC_ctrl23, wind_inertial, aircraft_parameters);
-    [t23, xdot_3] = ode45(odefun, [0, t_f], AC_X23);
+    [t23, xdot_3] = ode45(odefun, [0, t_f], AC_X23, opts);
     
     ctrl_23 = repmat(AC_ctrl23.', length(t23), 1);  % Values of Control inputs with each row = [de, da, dr, dt]
 
@@ -247,5 +249,6 @@ if Problem3_2 == 1
     %[w_n_32ph, zeta_32ph] = wn_zeta_funct_ph(z_e, u_e, aircraft_parameters);
 
 end
+
 
 
