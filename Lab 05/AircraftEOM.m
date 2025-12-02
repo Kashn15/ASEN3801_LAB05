@@ -27,9 +27,6 @@ Ixz = aircraft_parameters.Ixz;
 Iy = aircraft_parameters.Iy;
 Iz = aircraft_parameters.Iz;
 
-% Inertia Matrix Set up
-% I = [Ix, 0, Ixz; 0, Iy, 0; Ixz, 0, Iz];
-
 % Gamma 
 Gamma = Ix*Iz - Ixz^2;
 Gamma1 = (Ixz*(Ix-Iy)+Ixz^2)/Gamma;
@@ -66,31 +63,21 @@ N = Aero_M(3);
 pos_dot = R_BE * Vb;
 eul_dot = euler_kinematics(phi,theta,psi,omega);
 
-% Extracting Velocity
-u = pos_dot(1);
-v = pos_dot(2);
-w = pos_dot(3);
-
 % Dynamics
 p_dot = (Gamma1*p*q - Gamma2*q*r) + (Gamma3*L+Gamma4*N);
 q_dot = (Gamma5*p*r - Gamma6*((p^2)-(r^2)))+(1/Iy)*M;
 r_dot = (Gamma7*p*q - Gamma1*q*r) + (Gamma4*L+Gamma8*N);
 pqr_dot = [p_dot; q_dot; r_dot];
 
-u_dot = (r*v - q*w) + (aircraft_parameters.g *(-sin(theta))) + (X/aircraft_parameters.m);
-v_dot = (p*w - r*u) + (aircraft_parameters.g * cos(theta) * sin(phi)) + (Y/aircraft_parameters.m);
-w_dot = (q*u - p*v) + (aircraft_parameters.g * cos(theta) * cos(phi)) + (Z/aircraft_parameters.m);
+u_dot = (r*vE - q*wE) + (aircraft_parameters.g *(-sin(theta))) + (X/aircraft_parameters.m);
+v_dot = (p*wE - r*uE) + (aircraft_parameters.g * cos(theta) * sin(phi)) + (Y/aircraft_parameters.m);
+w_dot = (q*uE - p*vE) + (aircraft_parameters.g * cos(theta) * cos(phi)) + (Z/aircraft_parameters.m);
 uvw_dot = [u_dot; v_dot; w_dot];
 
 xdot = [pos_dot; eul_dot; uvw_dot; pqr_dot];
 
 end
 
-% x_dot = (cos(theta)*cos(psi))*uE + (sin(phi)*sin(theta)*cos(psi)-cos(phi)*sin(psi))*vE + (cos(phi)*sin(theta)*cos(psi)+sin(phi)*sin(psi))*wE;
-% y_dot = (cos(theta)*sin(psi))*uE + (sin(phi)*sin(theta)*sin(psi)+cos(phi)*cos(psi))*vE + (cos(phi)*sin(theta)*sin(psi)-sin(phi)*cos(psi))*wE;
-% z_dot = (-sin(theta))*uE + (sin(phi)*cos(theta))*vE + (cos(phi)*cos(theta))*wE;
-
-% pos_dot = [x_dot; y_dot; z_dot];
 
 
 
