@@ -14,9 +14,9 @@ zE = aircraft_state(3);
 phi = aircraft_state(4); 
 theta = aircraft_state(5); 
 psi = aircraft_state(6);
-u = aircraft_state(7); 
-v = aircraft_state(8); 
-w = aircraft_state(9);
+uE = aircraft_state(7); 
+vE = aircraft_state(8); 
+wE = aircraft_state(9);
 p = aircraft_state(10); 
 q = aircraft_state(11); 
 r = aircraft_state(12);
@@ -43,7 +43,7 @@ Gamma8 = Ix/Gamma;
 
 % Omega and Vb Set up
 omega = [p;q;r]; % Body Frame
-Vb = [u;v;w];
+Vb = [uE;vE;wE];
 
 % Rotation Matrices
 R_BE = Rot_Mat(phi,theta,psi);    % Body to Earth
@@ -62,19 +62,14 @@ L = Aero_M(1);
 M = Aero_M(2);
 N = Aero_M(3);
 
-% Calculate thrust and gravitational forces
-% F_g = aircraft_parameters.m * (R_EB * [0; 0; aircraft_parameters.g]);
-% F_tot = Aero_F + F_g; % Total forces
-% M_tot = Aero_M; % Total moments
-
 % Kinematics
 pos_dot = R_BE * Vb;
 eul_dot = euler_kinematics(phi,theta,psi,omega);
 
 % Extracting Velocity
-u_E = pos_dot(1);
-v_E = pos_dot(2);
-w_E = pos_dot(3);
+u = pos_dot(1);
+v = pos_dot(2);
+w = pos_dot(3);
 
 % Dynamics
 p_dot = (Gamma1*p*q - Gamma2*q*r) + (Gamma3*L+Gamma4*N);
@@ -82,12 +77,22 @@ q_dot = (Gamma5*p*r - Gamma6*((p^2)-(r^2)))+(1/Iy)*M;
 r_dot = (Gamma7*p*q - Gamma1*q*r) + (Gamma4*L+Gamma8*N);
 pqr_dot = [p_dot; q_dot; r_dot];
 
-u_dot = (r*v_E- q*w_E)+ aircraft_parameters.g *(-sin(theta))+ (X/aircraft_parameters.m);
-v_dot = (p*w_E + r*u_E) + aircraft_parameters.g * cos(theta) * sin(phi) + (Y/aircraft_parameters.m);
-w_dot = (q*u_E - p*v_E) + aircraft_parameters.g * cos(theta) * cos(phi) + (Z/aircraft_parameters.m);
+u_dot = (r*v - q*w) + (aircraft_parameters.g *(-sin(theta))) + (X/aircraft_parameters.m);
+v_dot = (p*w - r*u) + (aircraft_parameters.g * cos(theta) * sin(phi)) + (Y/aircraft_parameters.m);
+w_dot = (q*u - p*v) + (aircraft_parameters.g * cos(theta) * cos(phi)) + (Z/aircraft_parameters.m);
 uvw_dot = [u_dot; v_dot; w_dot];
 
 xdot = [pos_dot; eul_dot; uvw_dot; pqr_dot];
+
+end
+
+% x_dot = (cos(theta)*cos(psi))*uE + (sin(phi)*sin(theta)*cos(psi)-cos(phi)*sin(psi))*vE + (cos(phi)*sin(theta)*cos(psi)+sin(phi)*sin(psi))*wE;
+% y_dot = (cos(theta)*sin(psi))*uE + (sin(phi)*sin(theta)*sin(psi)+cos(phi)*cos(psi))*vE + (cos(phi)*sin(theta)*sin(psi)-sin(phi)*cos(psi))*wE;
+% z_dot = (-sin(theta))*uE + (sin(phi)*cos(theta))*vE + (cos(phi)*cos(theta))*wE;
+
+% pos_dot = [x_dot; y_dot; z_dot];
+
+
 
 
 
