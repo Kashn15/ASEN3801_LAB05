@@ -155,7 +155,7 @@ if Problem3_1 == 1
     AC_ctrl31 = [0.1079; 0; 0; 0.3182]; % u0 - Control input
     wind_inertial = [0;0;0]; % No wind
 
-    odefun = @(t,AC_X3) AircraftEOMDoublet(t_f, AC_X31, AC_ctrl, doublet_size, doublet_time, wind_inertial, aircraft_parameters);
+    odefun = @(t,AC_X31) AircraftEOMDoublet(t_f, AC_X31, AC_ctrl, doublet_size, doublet_time, wind_inertial, aircraft_parameters);
     [t31, xdot_4] = ode45(odefun, [0, t_f], AC_X31);
 
     % Control Values of Control inputs for Doublet Law (Controls)
@@ -243,3 +243,4 @@ if Problem3_2 == 1
     % Natural Frequency and Damping Ratio
     [w_n_32, zeta_32] = wn_zeta_funct(z_e, u_e, aircraft_parameters);
 end
+
